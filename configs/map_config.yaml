@@ -1,0 +1,15 @@
+map:
+  width: 33
+  height: 33
+  food_percent: 0.9
+  stone_percent: 0.0
+  colony_count: 1
+  colony_size: 3     # <== добавляем
+  colony_centered: true  # <== кастомная опция
+
+colors:
+  EMPTY: "#c2b280"     # земля
+  FOOD: "#00ff00"      # еда
+  STONE: "#808080"     # камни
+  COLONY: "#ffff00"    # жёлтый (муравейник)
+  AGENT: "#ff0000"
