@@ -3,6 +3,7 @@
 # === Размеры карты ===
 MAP_WIDTH = 50
 MAP_HEIGHT = 50
+TILE_SIZE = 16
 
 # === Типы тайлов ===
 TILE_TYPES = {
@@ -16,13 +17,20 @@ TILE_TYPES = {
 
 # === Цвета тайлов (для отрисовки / отладки) ===
 TILE_COLORS = {
-    TILE_TYPES["GROUND"]: (200, 200, 200),
+    TILE_TYPES["GROUND"]: (139, 69, 19),
     TILE_TYPES["ROCK"]: (100, 100, 100),
     TILE_TYPES["NEST"]: (255, 223, 0),
     TILE_TYPES["FOOD"]: (0, 200, 0),
     TILE_TYPES["STICK"]: (139, 69, 19),
     TILE_TYPES["CORPSE"]: (150, 0, 0),
 }
+
+# === Цвета объектов, агентов, UI ===
+COLOR_BG = (0, 0, 0)
+COLOR_AGENT = (255, 255, 255)
+COLOR_OBJECT_FOOD = (0, 255, 0)
+COLOR_TEXT = (255, 255, 255)
+
 
 # === Физические свойства тайлов ===
 TILE_PASSABLE = {
@@ -72,8 +80,8 @@ ENERGY_GAIN_IF_EAT_OUTSIDE = 10
 
 # === Генерация карты ===
 DEFAULT_SEED = 1
-OBSTACLE_DENSITY = 0.2
-FOOD_DENSITY = 0.05
+OBSTACLE_DENSITY = 0.1
+FOOD_DENSITY = 0.15
 
 # === Поведение мира ===
 TICKS_PER_GENERATION = 1000

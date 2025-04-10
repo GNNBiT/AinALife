@@ -17,7 +17,10 @@ class WorldManager:
         self.nest_positions = []
         self.conditions = None
         self.tick_count = 0
+        self.agents = []
 
+
+        self.generation = 0
         self.colonies = []
         self.reset_world()
 

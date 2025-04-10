@@ -23,8 +23,12 @@ def generate_map(width, height, colony_count=1, seed=DEFAULT_SEED):
 def place_obstacles(world_map):
     for y in range(world_map.height):
         for x in range(world_map.width):
+            tile = world_map.get_tile(x, y)
+            if tile.type != TILE_TYPES["GROUND"]:
+                continue  # НЕ ставим поверх NEST или других типов
             if random.random() < OBSTACLE_DENSITY:
                 world_map.set_tile(x, y, Tile(TILE_TYPES["ROCK"]))
+
 
 def place_food(world_map):
     total = int(world_map.width * world_map.height * FOOD_DENSITY)

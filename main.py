@@ -1,53 +1,45 @@
 # main.py
 
+import pygame
 from world.world_manager import WorldManager
-from world.entities.agent import Agent
-from world.systems import movement
-from world.systems.perception import get_cone_vision
-from world.config import TILE_TYPES
-
-def print_map_with_vision(world_map, agent, visible_tiles):
-    for y in range(world_map.height):
-        row = ""
-        for x in range(world_map.width):
-            if (x, y) == (agent.x, agent.y):
-                row += "A"
-            elif (x, y) in visible_tiles:
-                row += "*"
-            else:
-                tile = world_map.get_tile(x, y)
-                if tile.type == TILE_TYPES["ROCK"]:
-                    row += "#"
-                else:
-                    row += "."
-        print(row)
+from world.render.controls import get_controls_state
+from world.render.ui_state import UIState
+from world.render.pygame_render import init_display, render_world
+from world.config import TILE_SIZE
 
 def main():
-    # Создаём мир с 2 колониями
+    # Инициализация мира
     manager = WorldManager(colony_count=2)
+    ui_state = UIState()
 
-    # Размещаем агента вручную
-    agent = Agent(x=10, y=10)
-    agent.facing = (0, 1)
+    # Окно pygame
+    screen_width = manager.world_map.width * TILE_SIZE
+    screen_height = manager.world_map.height * TILE_SIZE
+    screen = init_display(screen_width, screen_height)
 
-    # Показываем начальное состояние
-    print("=== INITIAL STATE ===")
-    print(f"Tick: {manager.tick_count}")
-    print(f"Nests: {manager.nest_positions}")
-    print(f"Conditions: {manager.conditions}")
+    clock = pygame.time.Clock()
+    paused = False
 
-    for colony in manager.colonies:
-        print(colony)
+    running = True
+    while running:
+        controls = get_controls_state()
+        if controls["quit"]:
+            running = False
 
-    # Делаем 5 шагов симуляции
-    for _ in range(5):
-        manager.step()
-        print(f"Tick: {manager.tick_count}")
+        if controls["step"]:
+            manager.step()
 
-    # === ТЕСТ ЗРЕНИЯ ===
-    print("\n=== ПОЛЕ ЗРЕНИЯ АГЕНТА ===")
-    visible = get_cone_vision(agent, manager.world_map)
-    print_map_with_vision(manager.world_map, agent, set(visible))
+        if not paused and not controls["step"]:
+            manager.step()
+
+        paused = controls["paused"]
+
+        ui_state.update(manager)
+        render_world(screen, manager.world_map, manager.agents, ui_state)
+
+        clock.tick(10)  # FPS
+
+    pygame.quit()
 
 if __name__ == "__main__":
     main()
