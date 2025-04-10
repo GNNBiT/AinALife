@@ -13,7 +13,7 @@ def init_display(width, height):
     pygame.display.set_caption("AntSim")
     return screen
 
-def render_world(screen, world_map, agents, ui_state):
+def render_world(screen, world_map, ants, ui_state):
     screen.fill((0, 0, 0))  # фон
 
     # Рисуем тайлы
@@ -29,14 +29,14 @@ def render_world(screen, world_map, agents, ui_state):
                 pygame.draw.circle(screen, COLOR_OBJECT_FOOD, rect.center, TILE_SIZE // 4)
 
     # Рисуем агентов
-    for agent in agents:
-        pos = (agent.x * TILE_SIZE + TILE_SIZE // 2, agent.y * TILE_SIZE + TILE_SIZE // 2)
+    for ant in ants:
+        pos = (ant.x * TILE_SIZE + TILE_SIZE // 2, ant.y * TILE_SIZE + TILE_SIZE // 2)
         pygame.draw.circle(screen, COLOR_AGENT, pos, TILE_SIZE // 3)
 
     # UI
     draw_text(screen, f"Tick: {ui_state.tick}", (5, 5), color=COLOR_TEXT)
     draw_text(screen, f"Generation: {ui_state.generation}", (5, 25), color=COLOR_TEXT)
-    draw_text(screen, f"Agents: {ui_state.agent_count}", (5, 45), color=COLOR_TEXT)
+    draw_text(screen, f"Agents: {ui_state.ant_count}", (5, 45), color=COLOR_TEXT)
 
     pygame.display.flip()
 

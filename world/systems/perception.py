@@ -3,12 +3,12 @@
 from world.config import DIRECTION_LIST
 from math import copysign
 
-def get_cone_vision(agent, world_map):
+def get_cone_vision(ant, world_map):
     """3x3 зона перед агентом, с raycast-проверкой на видимость"""
     visible = set()
-    cx, cy = agent.x, agent.y
-    dx, dy = agent.facing
-    r = agent.vision_range  # радиус (длина конуса)
+    cx, cy = ant.x, ant.y
+    dx, dy = ant.facing
+    r = ant.vision_range  # радиус (длина конуса)
 
     zone = get_cone_zone(cx, cy, dx, dy, r)
 
@@ -67,12 +67,12 @@ def is_visible(x0, y0, x1, y1, world_map):
             return False
     return True
 
-def get_scent(agent, world_map):
+def get_scent(ant, world_map):
     """Возвращает запахи вокруг агента в радиусе scent_radius"""
     scents = {}
 
-    radius = agent.scent_radius
-    cx, cy = agent.x, agent.y
+    radius = ant.scent_radius
+    cx, cy = ant.x, ant.y
 
     for dy in range(-radius, radius + 1):
         for dx in range(-radius, radius + 1):

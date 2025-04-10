@@ -2,13 +2,13 @@
 
 from world.config import DIRECTIONS
 
-def update(agent, world_map):
+def update(ant, world_map):
     """Обновляет позицию агента, если движение возможно"""
 
-    dx, dy = agent.facing  # текущее направление взгляда
+    dx, dy = ant.facing  # текущее направление взгляда
 
-    new_x = agent.x + dx
-    new_y = agent.y + dy
+    new_x = ant.x + dx
+    new_y = ant.y + dy
 
     # Проверка границ и проходимости
     if not world_map.in_bounds(new_x, new_y):
@@ -18,10 +18,10 @@ def update(agent, world_map):
         return False
 
     # Движение
-    agent.set_position(new_x, new_y)
+    ant.set_position(new_x, new_y)
 
     # Можно позже: уменьшить энергию, голод и т.д.
-    agent.energy -= 1
-    agent.hunger += 1
+    ant.energy -= 1
+    ant.hunger += 1
 
     return True

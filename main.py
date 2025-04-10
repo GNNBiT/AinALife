@@ -35,7 +35,7 @@ def main():
         paused = controls["paused"]
 
         ui_state.update(manager)
-        render_world(screen, manager.world_map, manager.agents, ui_state)
+        render_world(screen, manager.world_map, manager.ants, ui_state)
 
         clock.tick(10)  # FPS
 

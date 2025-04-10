@@ -1,10 +1,10 @@
-# world/entities/agent.py
+# world/entities/ant.py
 
 from world.config import STARTING_ENERGY, VISION_RANGE, SCENT_RADIUS, DIRECTION_LIST
 import random
 import uuid
 
-class Agent:
+class Ant:
     def __init__(self, x, y, colony_id=0):
         self.id = uuid.uuid4()
         self.x = x
