@@ -1,5 +1,5 @@
 # world/core/map.py
-
+from world.core.scent_map import ScentMap
 from world.core.tile import Tile
 from world.config import MAP_WIDTH, MAP_HEIGHT, TILE_TYPES
 
@@ -11,7 +11,7 @@ class WorldMap:
             [Tile(TILE_TYPES["GROUND"]) for _ in range(width)]
             for _ in range(height)
         ]
-        self.scent_map = [[{} for _ in range(width)] for _ in range(height)]
+        self.scent_map = ScentMap(width, height)
 
     def in_bounds(self, x: int, y: int) -> bool:
         """Проверка, что координаты в пределах карты"""
@@ -46,6 +46,9 @@ class WorldMap:
         tile = self.get_tile(x, y)
         if tile:
             tile.remove_object()
+
+    def get_scent(self, x, y):
+        return self.scent_map.get(x, y)
 
     def __repr__(self):
         return f"<WorldMap {self.width}x{self.height}>"
