@@ -2,7 +2,7 @@
 
 import pygame
 from world.config import (
-    TILE_SIZE, TILE_TYPES, TILE_COLORS,
+    TILE_SIZE, TILE_TYPES, TILE_COLORS, DEBUG_SHOW_SCENT,
     COLOR_BG, COLOR_AGENT, COLOR_OBJECT_FOOD, COLOR_TEXT
 )
 
@@ -25,8 +25,12 @@ def render_world(screen, world_map, ants, ui_state):
             color = TILE_COLORS.get(tile.type, (30, 30, 30))  # по умолчанию — серый
             pygame.draw.rect(screen, color, rect)
 
+
             if tile.object:
                 pygame.draw.circle(screen, COLOR_OBJECT_FOOD, rect.center, TILE_SIZE // 4)
+
+    # === Запахи (ОТДЕЛЬНО)
+    draw_scent_overlay(screen, world_map)
 
     # Рисуем агентов
     for ant in ants:
@@ -44,3 +48,30 @@ def draw_text(surface, text, pos, color=(255, 255, 255), size=18):
     font = pygame.font.SysFont("Arial", size)
     render = font.render(text, True, color)
     surface.blit(render, pos)
+
+def draw_scent_overlay(screen, world_map):
+    if not DEBUG_SHOW_SCENT:
+        return
+    for y in range(world_map.height):
+        for x in range(world_map.width):
+            scent = world_map.get_scent(x, y)
+            if not scent:
+                continue
+
+            rect = pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+
+            # Еда — зелёный
+            food_intensity = scent.get("food", 0)
+            if food_intensity > 0:
+                alpha = min(255, int(food_intensity * 25))
+                overlay = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+                overlay.fill((0, 255, 0, alpha))
+                screen.blit(overlay, rect.topleft)
+
+            # Падаль — красный
+            corpse_intensity = scent.get("corpse", 0)
+            if corpse_intensity > 0:
+                alpha = min(255, int(corpse_intensity * 25))
+                overlay = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+                overlay.fill((255, 0, 0, alpha))
+                screen.blit(overlay, rect.topleft)

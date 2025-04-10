@@ -1,5 +1,5 @@
 # world/entities/object.py
-
+import random
 import uuid
 from world.config import ENERGY_GAIN_PER_FOOD
 
@@ -53,3 +53,9 @@ class Corpse(Food):
         super().__init__(nutrition=nutrition, amount=amount, decay=80)
         self.type = "corpse"
         self.weight = size
+
+class Berry(Food):
+    def __init__(self):
+        decay = random.randint(30, 60)
+        super().__init__(nutrition=10, amount=1, decay=decay)
+        self.type = "berry"

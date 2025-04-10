@@ -10,7 +10,9 @@ def check_death(ant, world_map, ants_list):
         # Падаль на месте смерти
         tile = world_map.get_tile(ant.x, ant.y)
         if tile.object is None:
-            tile.set_object(Corpse(size=1.0))  # можно брать вес из агента, если есть
+            corpse = Corpse(size=1.0)
+            tile.set_object(corpse)
+            world_map.scent_map.emit(ant.x, ant.y, scent_type="corpse", intensity=5, radius=6)
 
         # Удаление из списка агентов
         if ant in ants_list:

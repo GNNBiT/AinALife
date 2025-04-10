@@ -9,6 +9,8 @@ from world.config import (
     FOOD_DENSITY,
     DEFAULT_SEED
 )
+from world.entities.object import Berry
+
 
 def generate_map(width, height, colony_count=1, seed=DEFAULT_SEED):
     random.seed(seed)
@@ -29,15 +31,16 @@ def place_obstacles(world_map):
             if random.random() < OBSTACLE_DENSITY:
                 world_map.set_tile(x, y, Tile(TILE_TYPES["ROCK"]))
 
-
 def place_food(world_map):
     total = int(world_map.width * world_map.height * FOOD_DENSITY)
     for _ in range(total):
         x = random.randint(0, world_map.width - 1)
         y = random.randint(0, world_map.height - 1)
         tile = world_map.get_tile(x, y)
-        if tile and tile.type == TILE_TYPES["GROUND"]:
-            tile.set_object("FOOD")  # заглушка, потом будет WorldObject
+        if tile and tile.type == TILE_TYPES["GROUND"] and tile.object is None:
+            berry = Berry()
+            tile.set_object(berry)
+            world_map.scent_map.emit(x, y, scent_type="food", intensity=5, radius=6)
 
 def place_nests(world_map, colony_count):
     nests = []

@@ -95,3 +95,4 @@ WORLD_CONDITIONS = {
 
 # === Режим отладки ===
 DEBUG_MODE = True
+DEBUG_SHOW_SCENT = True
