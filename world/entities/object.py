@@ -42,9 +42,21 @@ class Food(WorldObject):
 
 
 class Stick(WorldObject):
-    def __init__(self, size=1.0):
+    def __init__(self, size=1.0, amount=1):
         super().__init__("stick", weight=size)
+        self.amount = amount
 
+    def add_one(self):
+        self.amount += 1
+        return self.amount >= 3  # True, если надо преобразовать
+
+    def is_barricade(self):
+        return self.amount >= 3
+
+class Barricade(WorldObject):
+    def __init__(self):
+        super().__init__("barricade", weight=9999)  # или неважно
+        self.blocks_movement = True
 
 class Corpse(Food):
     def __init__(self, size=1.0):

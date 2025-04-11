@@ -39,9 +39,14 @@ def interact(ant, world_map, colony, action: str = "nothing"):
 
     # === Бросить предмет ===
     elif action == "drop" and ant.status["carrying"]:
-        if tile.object is None:
-            tile.set_object(ant.status["carrying"])
-            ant.status["carrying"] = None
+        item = ant.status["carrying"]
+
+        if isinstance(item, Stick):
+            tile.place_stick()
+        elif tile.object is None:
+            tile.set_object(item)
+
+        ant.status["carrying"] = None
 
     # === "nothing" — ничего не делаем
 

@@ -1,6 +1,8 @@
 # world/systems/movement.py
 
 from world.config import DIRECTIONS
+from world.entities.object import Stick
+
 
 def update(ant, world_map, all_ants):
     """Обновляет позицию агента, если движение возможно"""
@@ -25,7 +27,7 @@ def update(ant, world_map, all_ants):
     ant.set_position(new_x, new_y)
 
     # Можно позже: уменьшить энергию, голод и т.д.
-    ant.energy -= 1
+    ant.energy -= 2 if isinstance(ant.status["carrying"], Stick) else 1
     ant.hunger += 1
 
     return True

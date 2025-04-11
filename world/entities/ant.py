@@ -5,6 +5,9 @@ from world.config import STARTING_ENERGY, VISION_RANGE, SCENT_RADIUS, DIRECTION_
 import random
 import uuid
 
+from world.entities.object import Stick
+
+
 class Ant:
     def __init__(self, x, y, colony_id=0):
         self.id = uuid.uuid4()
@@ -73,9 +76,11 @@ class Ant:
         return self.attack_power * exp_bonus * rand_factor
 
     def apply_damage(self, amount):
-        """
-        Применяет урон к муравью.
-        """
+        # Если несёт ветку — она ломается, урон не проходит
+        if isinstance(self.status["carrying"], Stick):
+            self.status["carrying"] = None
+            return
+
         self.health -= amount
 
     def get_total_respect(self):
