@@ -26,7 +26,6 @@ class WorldManager:
         self.tick_count = 0
         self.ants = []
 
-
         self.generation = 0
         self.colonies = []
         self.reset_world()

@@ -2,7 +2,7 @@
 
 from world.config import DIRECTIONS
 
-def update(ant, world_map):
+def update(ant, world_map, all_ants):
     """Обновляет позицию агента, если движение возможно"""
 
     dx, dy = ant.facing  # текущее направление взгляда
@@ -15,6 +15,10 @@ def update(ant, world_map):
         return False
 
     if not world_map.is_walkable(new_x, new_y):
+        return False
+
+    # Проверка: нет ли уже муравья на целевой клетке
+    if any(other.x == new_x and other.y == new_y for other in all_ants if other.id != ant.id):
         return False
 
     # Движение

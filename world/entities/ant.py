@@ -1,6 +1,7 @@
 # world/entities/ant.py
 
 from world.config import STARTING_ENERGY, VISION_RANGE, SCENT_RADIUS, DIRECTION_LIST
+
 import random
 import uuid
 
