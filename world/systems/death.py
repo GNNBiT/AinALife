@@ -6,7 +6,7 @@ from world.config import HUNGER_DEATH_THRESHOLD
 def check_death(ant, world_map, ants_list):
     """Проверяет, умер ли агент, и если да — удаляет и превращает в падаль"""
 
-    if ant.energy <= 0 or ant.hunger >= HUNGER_DEATH_THRESHOLD:
+    if ant.energy <= 0 or ant.hunger >= HUNGER_DEATH_THRESHOLD or ant.health <= 0:
         # Падаль на месте смерти
         tile = world_map.get_tile(ant.x, ant.y)
         if tile.object is None:

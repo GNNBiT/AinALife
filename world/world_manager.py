@@ -1,12 +1,16 @@
 # world/world_manager.py
 import random
 
+from world.config import MAP_WIDTH, MAP_HEIGHT, TILE_TYPES
+
 from world.core.map import WorldMap
-from world.entities.colony import Colony  # Добавь импорт наверху
 from world.core.generator import generate_map
 from world.core.conditions import WorldConditions
-from world.config import MAP_WIDTH, MAP_HEIGHT, TILE_TYPES
+
 from world.entities.object import Food
+from world.entities.colony import Colony  # Добавь импорт наверху
+
+from world.systems.death import check_death
 
 
 class WorldManager:
@@ -51,6 +55,9 @@ class WorldManager:
         self._spawn_random_corpse()
 
         # (далее можно: обновление агентов, логика поколений и т.д.)
+        self._process_attacks()
+        for ant in list(self.ants):  # используем list(), чтобы избежать проблем при удалении
+            check_death(ant, self.world_map, self.ants)
 
     def get_state(self):
         """Возвращает текущее состояние мира (например, для UI или логов)"""
@@ -96,6 +103,32 @@ class WorldManager:
                 if isinstance(obj, Food):
                     if obj.tick_decay():
                         tile.remove_object()
+
+    def _process_attacks(self):
+        """
+        Обрабатывает все атаки между муравьями.
+        """
+        combat_pairs = []  # список (attacker, target)
+
+        # 1. Собираем пары: кто хочет атаковать кого
+        for ant in list(self.ants):  # list() на случай удаления по ходу
+            action = getattr(ant, "next_action", None)
+            if action and action.get("type") == "attack":
+                target_id = action.get("target")
+                target = next((a for a in self.ants if a.id == target_id), None)
+                if target:
+                    combat_pairs.append((ant, target))
+
+        # 2. Применяем урон в обе стороны
+        for attacker, target in combat_pairs:
+            damage_to_target = attacker.calculate_damage()
+            target.apply_damage(damage_to_target)
+
+            # если target тоже атакует attacker — обоюдная атака
+            reverse = getattr(target, "next_action", None)
+            if reverse and reverse.get("type") == "attack" and reverse.get("target") == attacker.id:
+                damage_to_attacker = target.calculate_damage()
+                attacker.apply_damage(damage_to_attacker)
 
     def __repr__(self):
         return f"<WorldManager tick={self.tick_count}>"
