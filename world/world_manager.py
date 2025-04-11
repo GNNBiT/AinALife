@@ -7,7 +7,7 @@ from world.core.map import WorldMap
 from world.core.generator import generate_map
 from world.core.conditions import WorldConditions
 
-from world.entities.object import Food
+from world.entities.object import Food, Berry, Corpse
 from world.entities.colony import Colony  # Добавь импорт наверху
 
 from world.systems.death import check_death
@@ -66,7 +66,7 @@ class WorldManager:
             "conditions": self.conditions,
         }
 
-    def _spawn_berry(self, chance=0.4):
+    def _spawn_berry(self, chance=0.9):
         if random.random() > chance:
             return
 
@@ -74,10 +74,17 @@ class WorldManager:
             x, y = random.randint(0, self.world_map.width - 1), random.randint(0, self.world_map.height - 1)
             tile = self.world_map.get_tile(x, y)
             if tile.type == TILE_TYPES["GROUND"] and tile.object is None:
-                from world.entities.object import Berry
                 berry = Berry()
                 tile.set_object(berry)
-                self.world_map.scent_map.emit(x, y, scent_type="food", intensity=5)
+
+                self.world_map.scent_map.emit(
+                    x, y,
+                    scent_type="food",
+                    colony_id=-1,  # нейтральный мир
+                    intensity=5,
+                    radius=6,
+                    lifespan=berry.decay
+                )
                 break
 
     def _spawn_random_corpse(self, chance=0.005):
@@ -88,10 +95,16 @@ class WorldManager:
             x, y = random.randint(0, self.world_map.width - 1), random.randint(0, self.world_map.height - 1)
             tile = self.world_map.get_tile(x, y)
             if tile.type == TILE_TYPES["GROUND"] and tile.object is None:
-                from world.entities.object import Corpse
                 corpse = Corpse(size=1.0)
                 tile.set_object(corpse)
-                self.world_map.scent_map.emit(x, y, scent_type="corpse", intensity=10)
+                self.world_map.scent_map.emit(
+                    x, y,
+                    scent_type="corpse",
+                    colony_id=-1,  # нейтральный мир
+                    intensity=10,
+                    radius=6,
+                    lifespan=corpse.decay
+                )
                 break
 
     def _decay_objects(self):

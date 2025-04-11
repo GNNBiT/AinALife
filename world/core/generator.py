@@ -40,7 +40,15 @@ def place_food(world_map):
         if tile and tile.type == TILE_TYPES["GROUND"] and tile.object is None:
             berry = Berry()
             tile.set_object(berry)
-            world_map.scent_map.emit(x, y, scent_type="food", intensity=5, radius=6)
+            world_map.scent_map.emit(
+                x, y,
+                scent_type="food",
+                colony_id=-1,  # от мира
+                intensity=5,
+                radius=6,
+                lifespan=berry.decay,
+                direction=None
+            )
 
 def place_nests(world_map, colony_count):
     nests = []

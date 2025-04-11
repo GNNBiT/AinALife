@@ -52,26 +52,35 @@ def draw_text(surface, text, pos, color=(255, 255, 255), size=18):
 def draw_scent_overlay(screen, world_map):
     if not DEBUG_SHOW_SCENT:
         return
+
     for y in range(world_map.height):
         for x in range(world_map.width):
-            scent = world_map.get_scent(x, y)
-            if not scent:
+            scents = world_map.get_scent(x, y)
+            if not scents:
                 continue
+
+            # Суммируем по типам
+            scent_types = {
+                "food": 0.0,
+                "corpse": 0.0
+            }
+
+            for scent in scents:
+                if scent.type in scent_types:
+                    scent_types[scent.type] += scent.intensity
 
             rect = pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
 
             # Еда — зелёный
-            food_intensity = scent.get("food", 0)
-            if food_intensity > 0:
-                alpha = min(255, int(food_intensity * 25))
+            if scent_types["food"] > 0:
+                alpha = min(255, int(scent_types["food"] * 25))
                 overlay = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
                 overlay.fill((0, 255, 0, alpha))
                 screen.blit(overlay, rect.topleft)
 
             # Падаль — красный
-            corpse_intensity = scent.get("corpse", 0)
-            if corpse_intensity > 0:
-                alpha = min(255, int(corpse_intensity * 25))
+            if scent_types["corpse"] > 0:
+                alpha = min(255, int(scent_types["corpse"] * 25))
                 overlay = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
                 overlay.fill((255, 0, 0, alpha))
                 screen.blit(overlay, rect.topleft)
