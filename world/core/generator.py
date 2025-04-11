@@ -37,7 +37,7 @@ def place_food(world_map):
         x = random.randint(0, world_map.width - 1)
         y = random.randint(0, world_map.height - 1)
         tile = world_map.get_tile(x, y)
-        if tile and tile.type == TILE_TYPES["GROUND"] and tile.object is None:
+        if tile and tile.type == TILE_TYPES["GROUND"] and tile.is_empty():
             berry = Berry()
             tile.set_object(berry)
             world_map.scent_map.emit(

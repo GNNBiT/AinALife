@@ -3,8 +3,9 @@
 import pygame
 from world.config import (
     TILE_SIZE, TILE_TYPES, TILE_COLORS, DEBUG_SHOW_SCENT,
-    COLOR_BG, COLOR_AGENT, COLOR_OBJECT_FOOD, COLOR_TEXT
+    COLOR_BG, COLOR_AGENT, COLOR_OBJECT_FOOD, COLOR_TEXT, COLOR_OBJECT_STICK, COLOR_OBJECT_BARRICADE
 )
+from world.entities.object import Food, Stick, Barricade
 
 
 def init_display(width, height):
@@ -25,9 +26,13 @@ def render_world(screen, world_map, ants, ui_state):
             color = TILE_COLORS.get(tile.type, (30, 30, 30))  # по умолчанию — серый
             pygame.draw.rect(screen, color, rect)
 
-
-            if tile.object:
-                pygame.draw.circle(screen, COLOR_OBJECT_FOOD, rect.center, TILE_SIZE // 4)
+            for obj in tile.objects.values():
+                if isinstance(obj, Food):
+                    pygame.draw.circle(screen, COLOR_OBJECT_FOOD, rect.center, TILE_SIZE // 4)
+                elif isinstance(obj, Stick):
+                    pygame.draw.rect(screen, COLOR_OBJECT_STICK, rect, 2)
+                elif isinstance(obj, Barricade):
+                    pygame.draw.rect(screen, COLOR_OBJECT_BARRICADE, rect, 0)
 
     # === Запахи (ОТДЕЛЬНО)
     draw_scent_overlay(screen, world_map)

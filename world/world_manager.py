@@ -73,7 +73,7 @@ class WorldManager:
         for _ in range(20):
             x, y = random.randint(0, self.world_map.width - 1), random.randint(0, self.world_map.height - 1)
             tile = self.world_map.get_tile(x, y)
-            if tile.type == TILE_TYPES["GROUND"] and tile.object is None:
+            if tile.type == TILE_TYPES["GROUND"] and tile.is_empty():
                 berry = Berry()
                 tile.set_object(berry)
 
@@ -94,7 +94,7 @@ class WorldManager:
         for _ in range(10):
             x, y = random.randint(0, self.world_map.width - 1), random.randint(0, self.world_map.height - 1)
             tile = self.world_map.get_tile(x, y)
-            if tile.type == TILE_TYPES["GROUND"] and tile.object is None:
+            if tile.type == TILE_TYPES["GROUND"] and tile.is_empty():
                 corpse = Corpse(size=1.0)
                 tile.set_object(corpse)
                 self.world_map.scent_map.emit(
@@ -111,10 +111,11 @@ class WorldManager:
         for y in range(self.world_map.height):
             for x in range(self.world_map.width):
                 tile = self.world_map.get_tile(x, y)
-                obj = tile.object
-                if isinstance(obj, Food):
-                    if obj.tick_decay():
-                        tile.remove_object()
+
+                for obj_type, obj in list(tile.objects.items()):
+                    if isinstance(obj, Food):
+                        if obj.tick_decay():
+                            tile.remove_object(obj)
 
     def _process_attacks(self):
         """
