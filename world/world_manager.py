@@ -30,8 +30,8 @@ class WorldManager:
         self.colonies = []
         self.reset_world()
 
-    def reset_world(self):
-        self.world_map, self.nest_positions = generate_map(
+    def reset_world(self, first_get = False):
+        self.world_map, self.nest_positions, self.ants = generate_map(
             self.width, self.height, self.colony_count
         )
         self.conditions = WorldConditions()

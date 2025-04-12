@@ -7,8 +7,9 @@ from world.config import (
     TILE_TYPES,
     OBSTACLE_DENSITY,
     FOOD_DENSITY,
-    DEFAULT_SEED
+    DEFAULT_SEED, ANT_COUNT_PER_COLONY
 )
+from world.entities.ant import Ant
 from world.entities.object import Berry
 
 
@@ -19,8 +20,9 @@ def generate_map(width, height, colony_count=1, seed=DEFAULT_SEED):
     nests = place_nests(world_map, colony_count)
     place_obstacles(world_map)
     place_food(world_map)
+    ants = spawn_colony_ants(nests)
 
-    return world_map, nests
+    return world_map, nests, ants
 
 def place_obstacles(world_map):
     for y in range(world_map.height):
@@ -64,6 +66,14 @@ def place_nests(world_map, colony_count):
             nests.append((x + 1, y + 1))
         attempts += 1
     return nests
+
+def spawn_colony_ants(nests):
+    ants = []
+    for colony_id, nest in enumerate(nests):
+        for _ in range(ANT_COUNT_PER_COLONY):
+            ant = Ant(colony_id=colony_id, x=nest[0], y=nest[1])
+            ants.append(ant)
+    return ants
 
 def is_area_clear(world_map, x, y, size=3, min_dist=10, existing=None):
     if existing is None:

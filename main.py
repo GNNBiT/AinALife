@@ -5,11 +5,11 @@ from world.world_manager import WorldManager
 from world.render.controls import get_controls_state
 from world.render.ui_state import UIState
 from world.render.pygame_render import init_display, render_world
-from world.config import TILE_SIZE
+from world.config import TILE_SIZE, MAX_KNOWN_COLONIES
 
 def main():
     # Инициализация мира
-    manager = WorldManager(colony_count=2)
+    manager = WorldManager(colony_count=MAX_KNOWN_COLONIES)
     ui_state = UIState()
 
     # Окно pygame
