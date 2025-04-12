@@ -53,6 +53,20 @@ TILE_OPAQUE = {
     TILE_TYPES["CORPSE"]: False,
 }
 
+# Список возможных действий
+ACTION_LIST = [
+    "turn_left",     # 0
+    "turn_right",    # 1
+    "move_forward",  # 2
+    "move_backward", # 3
+    "pickup",        # 4
+    "drop"           # 5
+    "attack"         # 6
+]
+# Быстрый маппинг: имя → индекс
+ACTION_INDEX = {name: idx for idx, name in enumerate(ACTION_LIST)}
+# И обратный: индекс → имя
+INDEX_TO_ACTION = {idx: name for idx, name in enumerate(ACTION_LIST)}
 
 # === Направления движения (8 направлений) ===
 DIRECTIONS = {

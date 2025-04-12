@@ -1,5 +1,7 @@
 # world/entities/ant.py
+from collections import deque
 
+from models.ant_brain import AntBrain
 from world.config import STARTING_ENERGY, VISION_RANGE, SCENT_RADIUS, DIRECTION_LIST
 
 import random
@@ -33,9 +35,16 @@ class Ant:
         self.respect = {}
         self.respect_cooldowns = {}
 
+        self.next_action = {}
+
         self.health = 10  # базовое ХП, можно потом сделать эволюционно
         self.attack_power = 2  # сила атаки
         self.experience = 0.0  # пока не используется, но заложим на будущее
+
+        self.path_memory = deque(maxlen=30)
+        self.path_memory.append((x, y, DIRECTION_LIST.index(self.facing), 1.0))  # стартовая клетка — валидна
+
+        self.brain = AntBrain()
 
     def get_position(self):
         return self.x, self.y
@@ -43,6 +52,8 @@ class Ant:
     def set_position(self, x, y):
         self.x = x
         self.y = y
+        direction_idx = DIRECTION_LIST.index(self.facing)
+        self.path_memory.append((x, y, direction_idx, 1.0))
 
     def turn(self, direction_delta):
         """

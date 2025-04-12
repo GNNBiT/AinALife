@@ -1,7 +1,9 @@
 # world/world_manager.py
 import random
 
-from world.config import MAP_WIDTH, MAP_HEIGHT, TILE_TYPES
+import torch
+
+from world.config import MAP_WIDTH, MAP_HEIGHT, TILE_TYPES, INDEX_TO_ACTION
 
 from world.core.map import WorldMap
 from world.core.generator import generate_map
@@ -45,17 +47,39 @@ class WorldManager:
     def step(self):
         self.tick_count += 1
 
-        # decay глобальных запахов
-        self.world_map.scent_map.decay()
+        self._decay_environment()
+        self._spawn_resources()
 
-        # === Обработка ресурсов ===
+        self._decide_actions()  # фаза 1: мозги
+        self._resolve_movements()  # фаза 2: движение с конфликтами
+        self._process_attacks()  # фаза 3: атаки (уже есть)
+        self._process_deaths()  # фаза 4: смерть
+
+    def _decay_environment(self):
+        self.world_map.scent_map.decay()
         self._decay_objects()
+
+    def _spawn_resources(self):
         self._spawn_berry()
         self._spawn_random_corpse()
 
-        # (далее можно: обновление агентов, логика поколений и т.д.)
-        self._process_attacks()
-        for ant in list(self.ants):  # используем list(), чтобы избежать проблем при удалении
+    def _decide_actions(self):
+        for ant in self.ants:
+            input_data = ant.brain.gather_input_data(ant, self.world_map, self.ants)
+            output = ant.brain.forward(**input_data)
+
+            action_logits = output["action"]
+            action_idx = torch.argmax(action_logits).item()
+            action_type = INDEX_TO_ACTION[action_idx]
+
+            ant.next_action = {"type": action_type}
+
+            if action_type in ["move_forward", "move_backward", "attack"]:
+                dx, dy = ant.facing if action_type == "move_forward" else (-ant.facing[0], -ant.facing[1])
+                ant.next_action["target_pos"] = (ant.x + dx, ant.y + dy)
+
+    def _process_deaths(self):
+        for ant in list(self.ants):  # list() на случай удаления
             check_death(ant, self.world_map, self.ants)
 
     def get_state(self):
